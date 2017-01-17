@@ -1,0 +1,290 @@
+package MineSweep;
+
+import java.awt.Button;
+import java.util.Set;
+// Class for each square
+public class Grid extends Button {
+	
+    private Grid[] Grids;
+    
+    // eight neighbor squares
+    private Grid[] nearby;
+    
+    private Grid northWest;
+    private Grid north;
+    private Grid northEast;
+    private Grid east;
+    private Grid southEast;
+    private Grid south;
+    private Grid southWest;
+    private Grid west;
+     
+    private boolean isBomb;
+    private boolean isChange;// whether clicked
+    private int no;// index for square, counting from the first grid. 1 is the first one and 81 is the last one.
+ 
+    
+    public Grid(Grid[] Grids) {
+        this.Grids = Grids;
+    }
+ 
+    
+    public boolean change() {
+        this.isChange = true;
+        if(isBomb) {
+            return true;
+        } 
+        else {
+            this.setLabel(Integer.toString(this.getNearBombNo())); // Currently not accessible.
+            return false;
+        }
+    }
+ 
+    // get # of squares
+    public int getNearBombNo() {
+        int no = 0;
+        if(this.northWest != null && this.northWest.isBomb) no++;
+        if(this.north != null && this.north.isBomb) no++;
+        if(this.northEast != null && this.northEast.isBomb) no++;
+        if(this.east != null && this.east.isBomb) no++;
+        if(this.southEast != null && this.southEast.isBomb) no++;
+        if(this.south != null && this.south.isBomb) no++;
+        if(this.southWest != null && this.southWest.isBomb) no++;
+        if(this.west != null && this.west.isBomb) no++;
+         
+        return no;
+    }
+ 
+    // get nearby squares
+    public Grid getNearbyGrids(int i) {
+        int index;
+        switch (i) {
+        case 1: // north west
+            index = no - 10;
+            if(index < 1 || no == 19 || no == 28 || no == 37 || no == 46 || no == 55 || no == 64 || no == 73) {
+                return null;
+            } else {
+                return Grids[index];
+            }
+        case 2: // north
+            index = no - 9;
+            if(index < 1) {
+                return null;
+            } else {
+                return Grids[index];
+            }
+        case 3: // north east
+            index = no - 8;
+            if(index < 1 || no == 9 || no == 18 || no == 27 || no == 36 || no == 45 || no == 54 || no == 63 || no == 72) {
+                return null;
+            } else {
+                return Grids[index];
+            }
+        case 4: // east
+            index = no + 1;
+            if(no == 9 || no == 18 || no == 27 || no == 36 || no == 45 || no == 54 || no == 63 || no == 72 || no == 81) {
+                return null;
+            } else {
+                return Grids[index];
+            }
+        case 5: // south east
+            index = no + 10;
+            if(index >= 81 ||no == 9 || no == 18 || no == 27 || no == 36 || no == 45 || no == 54 || no == 63 || no == 72 || no == 81) {
+                return null;
+            } else {
+                return Grids[index]; 
+            }
+        case 6: // south
+            index = no + 9;
+            if(index > 81) {
+                return null;
+            } else {
+                return Grids[index];
+            }
+        case 7: // south west
+            index = no + 8;
+            if(index >= 81 || no==1 || no == 10 || no == 19 || no == 28 || no == 37 || no == 46 || no == 55 || no == 64 || no == 73) {
+                return null;
+            } else {
+                return Grids[index];
+            }
+        case 8: // west
+            index = no - 1;
+            if(no==1 || no==10 || no == 19 || no == 28 || no == 37 || no == 46 || no == 55 || no == 64 || no == 73) {
+                return null;
+            } else {
+                return Grids[index];
+            }
+        }
+        return null;
+    }
+     
+    
+    public void moveon(Set<Grid> set) {
+         
+        set.add(this);
+        if(this.getNorthWest() != null && this.getNorthWest().isBomb == false) {
+            this.getNorthWest().change();
+             
+            if(this.getNorthWest().getNearBombNo() == 0) {
+                if(set.contains(this.getNorthWest()) == false)
+                    this.getNorthWest().moveon(set);
+            }
+             
+            set.add(this.getNorthWest());
+        }
+         
+        if(this.getNorth() != null && this.getNorth().isBomb == false) {
+            this.getNorth().change();
+            if(this.getNorth().getNearBombNo() == 0) {
+                if(set.contains(this.getNorth()) == false)
+                    this.getNorth().moveon(set);
+            }
+             
+            set.add(this.getNorth());
+        } 
+         
+        if(this.getNorthEast() != null && this.getNorthEast().isBomb == false) {
+            this.getNorthEast().change();
+            if(this.getNorthEast().getNearBombNo() == 0) {
+                if(set.contains(this.getNorthEast()) == false)
+                    this.getNorthEast().moveon(set);
+            }
+             
+            set.add(this.getNorthEast());
+        } 
+         
+        if(this.getEast() != null && this.getEast().isBomb == false) {
+            this.getEast().change();
+            if(this.getEast().getNearBombNo() == 0) {
+                if(set.contains(this.getEast()) == false)
+                    this.getEast().moveon(set);
+            }
+             
+            set.add(this.getEast());
+        } 
+         
+        if(this.getSouthEast() != null && this.getSouthEast().isBomb == false) {
+            this.getSouthEast().change();
+            if(this.getSouthEast().getNearBombNo() == 0) {
+                if(set.contains(this.getSouthEast()) == false)
+                    this.getSouthEast().moveon(set);
+            }
+             
+            set.add(this.getSouthEast());
+        } 
+         
+        if(this.getSouth() != null && this.getSouth().isBomb == false) {
+            this.getSouth().change();
+            if(this.getSouth().getNearBombNo() == 0) {
+                if(set.contains(this.getSouth()) == false)
+                    this.getSouth().moveon(set);
+            }
+             
+            set.add(this.getSouth());
+        } 
+         
+        if(this.getSouthWest() != null && this.getSouthWest().isBomb == false) {
+            this.getSouthWest().change();
+            if(this.getSouthWest().getNearBombNo() == 0) {
+                if(set.contains(this.getSouthWest()) == false)
+                    this.getSouthWest().moveon(set);
+            }
+             
+            set.add(this.getSouthWest());
+        } 
+         
+        if(this.getWest() != null && this.getWest().isBomb == false) {
+            this.getWest().change();
+            if(this.getWest().getNearBombNo() == 0) {
+                if(set.contains(this.getWest()) == false)
+                    this.getWest().moveon(set);
+            }
+             
+            set.add(this.getWest());
+        } 
+    }
+
+     
+    public int getNo() {
+        return no;
+    }
+    public void setNo(int no) {
+        this.no = no;
+    }
+    
+    public Grid getNorthWest() {
+        return northWest;
+    }
+    public void setNorthWest(Grid northWest) {
+        this.northWest = northWest;
+    }
+ 
+    public Grid getNorth() {
+        return north;
+    }
+    public void setNorth(Grid north) {
+        this.north = north;
+    }
+     
+    public Grid getNorthEast() {
+        return northEast;
+    }
+    public void setNorthEast(Grid northEast) {
+        this.northEast = northEast;
+    }
+    
+    public Grid getEast() {
+        return east;
+    }
+    public void setEast(Grid east) {
+        this.east = east;
+    }
+ 
+    public Grid getSouth() {
+        return south;
+    }
+    public void setSouth(Grid south) {
+        this.south = south;
+    }
+ 
+    public Grid getSouthEast() {
+        return southEast;
+    }
+    public void setSouthEast(Grid southEast) {
+        this.southEast = southEast;
+    }
+ 
+    public Grid getSouthWest() {
+        return southWest;
+    }
+    public void setSouthWest(Grid southWest) {
+        this.southWest = southWest;
+    }
+ 
+    public Grid getWest() {
+        return west;
+    }
+    public void setWest(Grid west) {
+        this.west = west;
+    }
+ 
+    public boolean isBomb() {
+        return isBomb;
+    }
+    public void setBomb(boolean isBomb) {
+        this.isBomb = isBomb;
+    }
+ 
+    public boolean isChange() {
+        return isChange;
+    }
+    public void setChange(boolean isChange) {
+        this.isChange = isChange;
+    }
+ 
+    public void setGrids(Grid[] Grids) {
+        this.Grids = Grids;
+    }
+ 
+}

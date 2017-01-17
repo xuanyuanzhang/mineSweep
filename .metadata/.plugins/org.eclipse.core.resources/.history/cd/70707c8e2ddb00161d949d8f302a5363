@@ -1,0 +1,234 @@
+package MineSweep;
+
+import java.awt.Button;
+import java.util.Set;
+
+// Class for each square
+public class Grid extends Button {
+	
+    private Grid[] Grids;
+    
+    // eight neighbor squares
+    private Grid northWest;
+    private Grid north;
+    private Grid northEast;
+    private Grid east;
+    private Grid southEast;
+    private Grid south;
+    private Grid southWest;
+    private Grid west;
+     
+    private boolean isBomb;
+    private boolean isClicked;// whether clicked. Nothing will happen to click on a clicked grid.
+    private int indexOfSquare;// index for square, counting from the first grid. 1 is the first one and 81 is the last one.
+ 
+    
+    public Grid(Grid[] Grids) {
+        this.Grids = Grids;
+    }
+    
+    public boolean click() {
+        this.isClicked = true;
+        if(isBomb) {
+            return true;
+        } 
+        else {
+            this.setLabel(Integer.toString(this.getNearbyBombCount())); // Currently not accessible.
+            return false;
+        }
+    }
+ 
+    // get # of squares
+    public int getNearbyBombCount() {
+        int count = 0;
+        if(this.northWest.isBomb && this.northWest != null) count++;
+        if(this.north.isBomb && this.north != null) count++;
+        if(this.northEast.isBomb && this.northEast != null) count++;
+        if(this.east.isBomb && this.east != null) count++;
+        if(this.southEast.isBomb && this.southEast != null) count++;
+        if(this.south.isBomb && this.south != null) count++;
+        if(this.southWest.isBomb && this.southWest != null) count++;
+        if(this.west.isBomb && this.west != null) count++;
+         
+        return count;
+    }
+ 
+    // get nearby squares
+    public Grid getNearbyGrids(int i) {
+        switch (i) {
+        case 1: // north west, the first row plus the first column does not have the north west neighbor.
+            if(this.isAtFirstRow() || this.isAtFirstColumn()) {
+                return null;
+            } else {
+                return Grids[indexOfSquare - 10];
+            }
+        case 2: // north, the first row does not have north neighbor.
+            if(this.isAtFirstRow()) {
+                return null;
+            } else {
+                return Grids[indexOfSquare - 9];
+            }
+        case 3: // north east, the first row plus the last column does not have the north east neighbor.
+            if(this.isAtFirstRow() || this.isAtLastColumn()) {
+            	return null;
+            } else {
+                return Grids[indexOfSquare - 8];
+            }
+        case 4: // east, the last column does not have the east neighbor. (when index = 9x + 1)
+            if(this.isAtLastColumn()) {
+            	return null;
+            } else {
+                return Grids[indexOfSquare + 1];
+            }
+        case 5: // south east, the last row plus the last column does not have the south east neighbor.
+            if(this.isAtLastRow() || this.isAtLastColumn()) {
+            	return null;
+            } else {
+                return Grids[indexOfSquare + 10]; 
+            }
+        case 6: // south, the last row does not have the south neighbor.
+            if(this.isAtLastRow()) {
+                return null;
+            } else {
+                return Grids[indexOfSquare + 9];
+            }
+        case 7: // south west, the last row plus the first column does not have the south west neighbor.
+            if(this.isAtLastRow()|| this.isAtFirstColumn()) {
+            	return null;
+            } else {
+                return Grids[indexOfSquare + 8];
+            }
+        case 8: // west, the first column does not have the west neighbor. 
+            if(this.isAtFirstColumn()) {
+            	return null;
+            } else {
+                return Grids[indexOfSquare - 1];
+            }
+        }
+        return null;
+    }
+     
+    private boolean isAtFirstRow(){
+    	return indexOfSquare < 10;
+    }
+    
+    private boolean isAtLastRow(){
+    	return indexOfSquare > 72;
+    }
+    
+    private boolean isAtFirstColumn(){
+    	return indexOfSquare % 9 == 1;
+    }
+    
+    private boolean isAtLastColumn(){
+    	return indexOfSquare % 9 == 0;
+    }
+    
+    private void isFreeSpace(Set<Grid> set, Grid nearbyGrid){
+    	if(nearbyGrid != null && nearbyGrid.isBomb == false) {
+    		nearbyGrid.click();
+            if(nearbyGrid.getNearbyBombCount() == 0) {
+                if(set.contains(nearbyGrid) == false)
+                	nearbyGrid.bfs(set);
+            }
+            set.add(nearbyGrid);
+        }
+    }
+    
+    //If click on a grid that is neither a bomb nor adjacent to a bomb, do bfs among its adjacent grids.
+    public void bfs(Set<Grid> set) {
+         
+        set.add(this);
+        isFreeSpace(set, this.getNorthWest());
+        isFreeSpace(set, this.getNorth());
+        isFreeSpace(set, this.getNorthEast());
+        isFreeSpace(set, this.getEast());
+        isFreeSpace(set, this.getSouthEast());
+        isFreeSpace(set, this.getSouth());
+        isFreeSpace(set, this.getSouthWest());
+        isFreeSpace(set, this.getWest());
+        
+    }
+     
+    public int getIndexOfSquare() {
+        return indexOfSquare;
+    }
+    public void setIndexOfSquare(int indexOfSquare) {
+        this.indexOfSquare = indexOfSquare;
+    }
+    
+    public Grid getNorthWest() {
+        return northWest;
+    }
+    public void setNorthWest(Grid northWest) {
+        this.northWest = northWest;
+    }
+ 
+    public Grid getNorth() {
+        return north;
+    }
+    public void setNorth(Grid north) {
+        this.north = north;
+    }
+     
+    public Grid getNorthEast() {
+        return northEast;
+    }
+    public void setNorthEast(Grid northEast) {
+        this.northEast = northEast;
+    }
+    
+    public Grid getEast() {
+        return east;
+    }
+    public void setEast(Grid east) {
+        this.east = east;
+    }
+ 
+    public Grid getSouth() {
+        return south;
+    }
+    public void setSouth(Grid south) {
+        this.south = south;
+    }
+ 
+    public Grid getSouthEast() {
+        return southEast;
+    }
+    public void setSouthEast(Grid southEast) {
+        this.southEast = southEast;
+    }
+ 
+    public Grid getSouthWest() {
+        return southWest;
+    }
+    public void setSouthWest(Grid southWest) {
+        this.southWest = southWest;
+    }
+ 
+    public Grid getWest() {
+        return west;
+    }
+    public void setWest(Grid west) {
+        this.west = west;
+    }
+ 
+    public boolean isBomb() {
+        return isBomb;
+    }
+    public void setBomb(boolean isBomb) {
+        this.isBomb = isBomb;
+    }
+ 
+    public boolean isChange() {
+        return isClicked;
+    }
+    public void setChange(boolean isClicked) {
+        this.isClicked = isClicked;
+    }
+ 
+    public void setGrids(Grid[] Grids) {
+        this.Grids = Grids;
+    }
+ 
+}

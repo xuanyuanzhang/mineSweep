@@ -1,0 +1,47 @@
+import java.util.Random;
+
+
+public class MineSweep {
+
+	private int[][] map;
+	private int numOfMines;
+	
+	public MineSweep(int size, int numOfMines){
+		this.numOfMines = numOfMines;
+		int[][] temp = setMines(size,numOfMines);
+		this.map = temp;
+	}
+	
+	//Output a matrix displays the map.
+	public void output(){
+		for(int i=0;i<map.length;i++){
+			for(int j=0;j<map[0].length;j++){
+				System.out.println(map[i][j]+" ");
+			}
+			System.out.println("\n");
+		}
+	}
+	
+	//Help function to set mines. Called in constructor.
+	private int[][] setMines(int size, int numOfMines){
+		int[][] output = new int[size][size];
+		RandomNumberGenerator r = new RandomNumberGenerator(size*size);
+		if(numOfMines<0)
+			return null;
+		while(numOfMines>0){
+			int i,j;
+			int index = r.next();
+			i = index/size;
+			j = index%size;
+			output[i][j] = 9;
+		}
+		
+		return null;
+	}
+	
+	public static void main(String[] args){
+		System.out.println("Hello!");
+		MineSweep project = new MineSweep(5, 5);
+		project.output();
+	}
+}
